@@ -5,8 +5,15 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/JuanLopezAranzazu/backend/internal/auth"
 	"github.com/JuanLopezAranzazu/backend/internal/config"
 	"github.com/JuanLopezAranzazu/backend/internal/database"
+	"github.com/JuanLopezAranzazu/backend/internal/handlers"
+	"github.com/JuanLopezAranzazu/backend/internal/middleware"
+	"github.com/JuanLopezAranzazu/backend/internal/repository"
+	"github.com/JuanLopezAranzazu/backend/internal/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -27,15 +34,56 @@ func main() {
 		log.Fatalf("Ha ocurrido un error al ejecutar las migraciones: %v", err)
 	}
 
-	// Configurar el servidor HTTP
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
+	// JWT
+	jwtSvc := auth.NewJWTService(cfg.JWT)
+
+	// Repositorios
+	userRepo := repository.NewUserRepository(db)
+
+	// Servicios
+	authSvc := services.NewAuthService(userRepo, jwtSvc)
+	userSvc := services.NewUserService(userRepo)
+
+	// Handlers
+	authHandler := handlers.NewAuthHandler(authSvc)
+	userHandler := handlers.NewUserHandler(userSvc)
+
+	// Configurar Gin
+	gin.SetMode(cfg.Server.Mode)
+	r := gin.Default()
+	r.Use(middleware.CORSMiddleware())
+
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
+
+	api := r.Group("/api")
+	{
+		// Rutas de autenticación
+		authRoutes := api.Group("/auth")
+		{
+			authRoutes.POST("/register", authHandler.Register)
+			authRoutes.POST("/login", authHandler.Login)
+		}
+
+		// Rutas protegidas
+		protected := api.Group("/")
+		protected.Use(middleware.AuthMiddleware(jwtSvc))
+		{
+			// Rutas de usuario
+			users := protected.Group("/users")
+			{
+				users.GET("/me", userHandler.GetProfile)
+				users.PUT("/me", userHandler.UpdateProfile)
+				users.PUT("/me/password", userHandler.ChangePassword)
+			}
+		}
+	}
 
 	addr := fmt.Sprintf(":%s", cfg.Server.Port)
 	log.Printf("El servidor está corriendo en %s", addr)
-	if err := http.ListenAndServe(addr, nil); err != nil {
+
+	if err := r.Run(addr); err != nil {
 		log.Fatalf("Ha ocurrido un error al iniciar el servidor: %v", err)
 	}
 }
