@@ -35,6 +35,26 @@ type ChangePasswordRequest struct {
 	NewPassword string `json:"new_password" binding:"required,min=6"`
 }
 
+type CreateCategoryRequest struct {
+	Name  string  `json:"name" binding:"required,min=1,max=100"`
+	Color *string `json:"color"`
+	Icon  *string `json:"icon"`
+	Type  string  `json:"type" binding:"required,oneof=income expense"`
+}
+
+type UpdateCategoryRequest struct {
+	Name string `json:"name" binding:"omitempty,min=1,max=100"`
+	Type string `json:"type" binding:"omitempty,oneof=income expense"`
+}
+
+type CategoryResponse struct {
+	ID        string    `json:"id"`
+	UserID    *string   `json:"user_id"`
+	Name      string    `json:"name"`
+	Type      string    `json:"type"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 type MessageResponse struct {
 	Message string `json:"message"`
 }

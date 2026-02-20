@@ -39,14 +39,17 @@ func main() {
 
 	// Repositorios
 	userRepo := repository.NewUserRepository(db)
+	categoryRepo := repository.NewCategoryRepository(db)
 
 	// Servicios
 	authSvc := services.NewAuthService(userRepo, jwtSvc)
 	userSvc := services.NewUserService(userRepo)
+	categorySvc := services.NewCategoryService(categoryRepo)
 
 	// Handlers
 	authHandler := handlers.NewAuthHandler(authSvc)
 	userHandler := handlers.NewUserHandler(userSvc)
+	categoryHandler := handlers.NewCategoryHandler(categorySvc)
 
 	// Configurar Gin
 	gin.SetMode(cfg.Server.Mode)
@@ -76,6 +79,16 @@ func main() {
 				users.GET("/me", userHandler.GetProfile)
 				users.PUT("/me", userHandler.UpdateProfile)
 				users.PUT("/me/password", userHandler.ChangePassword)
+			}
+
+			// Rutas de categorías
+			categories := protected.Group("/categories")
+			{
+				categories.POST("", categoryHandler.Create)
+				categories.GET("", categoryHandler.GetAll)
+				categories.GET("/:id", categoryHandler.GetByID)
+				categories.PUT("/:id", categoryHandler.Update)
+				categories.DELETE("/:id", categoryHandler.Delete)
 			}
 		}
 	}
