@@ -55,6 +55,33 @@ type CategoryResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type CreateAccountRequest struct {
+	Name        string  `json:"name" binding:"required,min=1,max=100"`
+	Type        string  `json:"type" binding:"required,oneof=cash bank credit savings investment"`
+	Balance     float64 `json:"balance"`
+	Currency    string  `json:"currency" binding:"required,len=3"`
+	Description *string `json:"description"`
+}
+
+type UpdateAccountRequest struct {
+	Name        string  `json:"name" binding:"omitempty,min=1,max=100"`
+	Type        string  `json:"type" binding:"omitempty,oneof=cash bank credit savings investment"`
+	Currency    string  `json:"currency" binding:"omitempty,len=3"`
+	Description *string `json:"description"`
+}
+
+type AccountResponse struct {
+	ID          string    `json:"id"`
+	UserID      string    `json:"user_id"`
+	Name        string    `json:"name"`
+	Type        string    `json:"type"`
+	Balance     float64   `json:"balance"`
+	Currency    string    `json:"currency"`
+	Description *string   `json:"description,omitempty"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
 type MessageResponse struct {
 	Message string `json:"message"`
 }

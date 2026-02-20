@@ -40,16 +40,19 @@ func main() {
 	// Repositorios
 	userRepo := repository.NewUserRepository(db)
 	categoryRepo := repository.NewCategoryRepository(db)
+	accountRepo := repository.NewAccountRepository(db)
 
 	// Servicios
 	authSvc := services.NewAuthService(userRepo, jwtSvc)
 	userSvc := services.NewUserService(userRepo)
 	categorySvc := services.NewCategoryService(categoryRepo)
+	accountSvc := services.NewAccountService(accountRepo)
 
 	// Handlers
 	authHandler := handlers.NewAuthHandler(authSvc)
 	userHandler := handlers.NewUserHandler(userSvc)
 	categoryHandler := handlers.NewCategoryHandler(categorySvc)
+	accountHandler := handlers.NewAccountHandler(accountSvc)
 
 	// Configurar Gin
 	gin.SetMode(cfg.Server.Mode)
@@ -89,6 +92,16 @@ func main() {
 				categories.GET("/:id", categoryHandler.GetByID)
 				categories.PUT("/:id", categoryHandler.Update)
 				categories.DELETE("/:id", categoryHandler.Delete)
+			}
+
+			// Rutas de cuentas
+			accounts := protected.Group("/accounts")
+			{
+				accounts.POST("", accountHandler.Create)
+				accounts.GET("", accountHandler.GetAll)
+				accounts.GET("/:id", accountHandler.GetByID)
+				accounts.PUT("/:id", accountHandler.Update)
+				accounts.DELETE("/:id", accountHandler.Delete)
 			}
 		}
 	}
