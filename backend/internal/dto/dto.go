@@ -2,6 +2,7 @@ package dto
 
 import "time"
 
+// Autenticación
 type RegisterRequest struct {
 	Name     string `json:"name" binding:"required,min=2,max=100"`
 	Email    string `json:"email" binding:"required,email"`
@@ -18,6 +19,7 @@ type AuthResponse struct {
 	User  UserResponse `json:"user"`
 }
 
+// Usuarios
 type UserResponse struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
@@ -35,6 +37,7 @@ type ChangePasswordRequest struct {
 	NewPassword string `json:"new_password" binding:"required,min=6"`
 }
 
+// Categorías
 type CreateCategoryRequest struct {
 	Name  string  `json:"name" binding:"required,min=1,max=100"`
 	Color *string `json:"color"`
@@ -55,6 +58,7 @@ type CategoryResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+// Cuentas
 type CreateAccountRequest struct {
 	Name        string  `json:"name" binding:"required,min=1,max=100"`
 	Type        string  `json:"type" binding:"required,oneof=cash bank credit savings investment"`
@@ -80,6 +84,37 @@ type AccountResponse struct {
 	Description *string   `json:"description,omitempty"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+// Transacciones
+type CreateTransactionRequest struct {
+	AccountID   string  `json:"account_id" binding:"required,uuid"`
+	CategoryID  *string `json:"category_id" binding:"omitempty,uuid"`
+	Type        string  `json:"type" binding:"required,oneof=income expense transfer"`
+	Amount      float64 `json:"amount" binding:"required,gt=0"`
+	Description *string `json:"description"`
+	Date        string  `json:"date" binding:"required"`
+}
+
+type UpdateTransactionRequest struct {
+	AccountID   string  `json:"account_id" binding:"omitempty,uuid"`
+	CategoryID  *string `json:"category_id" binding:"omitempty,uuid"`
+	Type        string  `json:"type" binding:"omitempty,oneof=income expense transfer"`
+	Amount      float64 `json:"amount" binding:"omitempty,gt=0"`
+	Description *string `json:"description"`
+	Date        string  `json:"date"`
+}
+
+type TransactionResponse struct {
+	ID          string    `json:"id"`
+	UserID      string    `json:"user_id"`
+	AccountID   string    `json:"account_id"`
+	CategoryID  *string   `json:"category_id,omitempty"`
+	Type        string    `json:"type"`
+	Amount      float64   `json:"amount"`
+	Description *string   `json:"description,omitempty"`
+	Date        time.Time `json:"date"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 type MessageResponse struct {

@@ -41,18 +41,21 @@ func main() {
 	userRepo := repository.NewUserRepository(db)
 	categoryRepo := repository.NewCategoryRepository(db)
 	accountRepo := repository.NewAccountRepository(db)
+	txRepo := repository.NewTransactionRepository(db)
 
 	// Servicios
 	authSvc := services.NewAuthService(userRepo, jwtSvc)
 	userSvc := services.NewUserService(userRepo)
 	categorySvc := services.NewCategoryService(categoryRepo)
 	accountSvc := services.NewAccountService(accountRepo)
+	txSvc := services.NewTransactionService(txRepo, accountRepo)
 
 	// Handlers
 	authHandler := handlers.NewAuthHandler(authSvc)
 	userHandler := handlers.NewUserHandler(userSvc)
 	categoryHandler := handlers.NewCategoryHandler(categorySvc)
 	accountHandler := handlers.NewAccountHandler(accountSvc)
+	txHandler := handlers.NewTransactionHandler(txSvc)
 
 	// Configurar Gin
 	gin.SetMode(cfg.Server.Mode)
@@ -102,6 +105,16 @@ func main() {
 				accounts.GET("/:id", accountHandler.GetByID)
 				accounts.PUT("/:id", accountHandler.Update)
 				accounts.DELETE("/:id", accountHandler.Delete)
+			}
+
+			// Rutas de transacciones
+			transactions := protected.Group("/transactions")
+			{
+				transactions.POST("", txHandler.Create)
+				transactions.GET("", txHandler.GetAll)
+				transactions.GET("/:id", txHandler.GetByID)
+				transactions.PUT("/:id", txHandler.Update)
+				transactions.DELETE("/:id", txHandler.Delete)
 			}
 		}
 	}
