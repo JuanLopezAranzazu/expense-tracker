@@ -1,0 +1,13 @@
+allowBuilds:
+  esbuild: set this to true or false
+minimumReleaseAgeExclude:
+  - '@mantine/charts@9.6.2'
+  - '@mantine/core@9.6.2'
+  - '@mantine/dates@9.6.2'
+  - '@mantine/form@9.6.2'
+  - '@mantine/hooks@9.6.2'
+  - '@mantine/modals@9.6.2'
+  - '@mantine/notifications@9.6.2'
+  - '@mantine/store@9.6.2'
+  - '@tanstack/query-core@5.103.2'
+  - '@tanstack/react-query@5.103.2'

@@ -24,4 +24,10 @@
 # Go workspace file
 go.work
 
+# Environment files
+.env
+.env.local
+.env.*
+!.env.example 
+
 # End of https://www.toptal.com/developers/gitignore/api/go
