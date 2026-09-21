@@ -39,10 +39,8 @@ type ChangePasswordRequest struct {
 
 // Categorías
 type CreateCategoryRequest struct {
-	Name  string  `json:"name" binding:"required,min=1,max=100"`
-	Color *string `json:"color"`
-	Icon  *string `json:"icon"`
-	Type  string  `json:"type" binding:"required,oneof=income expense"`
+	Name string `json:"name" binding:"required,min=1,max=100"`
+	Type string `json:"type" binding:"required,oneof=income expense"`
 }
 
 type UpdateCategoryRequest struct {
@@ -90,7 +88,7 @@ type AccountResponse struct {
 type CreateTransactionRequest struct {
 	AccountID   string  `json:"account_id" binding:"required,uuid"`
 	CategoryID  *string `json:"category_id" binding:"omitempty,uuid"`
-	Type        string  `json:"type" binding:"required,oneof=income expense transfer"`
+	Type        string  `json:"type" binding:"required,oneof=income expense"`
 	Amount      float64 `json:"amount" binding:"required,gt=0"`
 	Description *string `json:"description"`
 	Date        string  `json:"date" binding:"required"`
@@ -99,7 +97,7 @@ type CreateTransactionRequest struct {
 type UpdateTransactionRequest struct {
 	AccountID   string  `json:"account_id" binding:"omitempty,uuid"`
 	CategoryID  *string `json:"category_id" binding:"omitempty,uuid"`
-	Type        string  `json:"type" binding:"omitempty,oneof=income expense transfer"`
+	Type        string  `json:"type" binding:"omitempty,oneof=income expense"`
 	Amount      float64 `json:"amount" binding:"omitempty,gt=0"`
 	Description *string `json:"description"`
 	Date        string  `json:"date"`

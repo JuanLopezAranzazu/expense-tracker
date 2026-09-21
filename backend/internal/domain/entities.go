@@ -79,7 +79,7 @@ type Transaction struct {
 	UserID      string         `gorm:"type:uuid;not null;index" json:"user_id"`
 	AccountID   string         `gorm:"type:uuid;not null;index" json:"account_id"`
 	CategoryID  *string        `gorm:"type:uuid;index" json:"category_id,omitempty"`
-	Type        string         `gorm:"type:varchar(20);not null;check:type IN ('income','expense','transfer')" json:"type"`
+	Type        string         `gorm:"type:varchar(20);not null;check:type IN ('income','expense')" json:"type"`
 	Amount      float64        `gorm:"type:decimal(15,2);not null" json:"amount"`
 	Description *string        `gorm:"type:text" json:"description,omitempty"`
 	Date        time.Time      `gorm:"type:date;not null" json:"date"`
